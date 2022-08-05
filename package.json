@@ -9,9 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
+    "@inrupt/solid-client-authn-browser": "^1.12.2",
+    "@inrupt/solid-ui-react": "^2.8.0",
+    "@mui/icons-material": "^5.8.4",
+    "@mui/material": "^5.9.3",
+    "dayjs": "^1.11.4",
     "next": "12.2.3",
+    "rdf-parse": "^2.1.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "readable-web-to-node-stream": "^3.0.2"
   },
   "devDependencies": {
     "eslint": "8.21.0",
