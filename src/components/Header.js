@@ -38,7 +38,11 @@ function Header(props) {
   return (
     <React.Fragment>
       <Toolbar sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Button variant="outlined" size="small">
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => router.push(`/faq`)}
+        >
           FAQ
         </Button>
         <Typography
@@ -48,6 +52,7 @@ function Header(props) {
           align="center"
           noWrap
           sx={{ flex: 1 }}
+          onClick={() => router.push(`/`)}
         >
           {title}
         </Typography>
