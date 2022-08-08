@@ -1,5 +1,4 @@
 import * as React from "react";
-import PropTypes from "prop-types";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -12,6 +11,29 @@ function Header(props) {
   const { title } = props;
   const { session } = useSession();
   const router = useRouter();
+
+  let loginButton;
+  if (session) {
+    if (session.info.isLoggedIn) {
+      loginButton = (
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => router.push(`/login`)}
+        >
+          Login
+        </Button>
+      );
+    } else {
+      loginButton = (
+        <LogoutButton onLogout={() => console.log("logged out!")}>
+          <Button variant="outlined" size="small">
+            Log out
+          </Button>
+        </LogoutButton>
+      );
+    }
+  }
 
   return (
     <React.Fragment>
@@ -32,6 +54,7 @@ function Header(props) {
         {/* <IconButton>
           <SearchIcon />
         </IconButton> */}
+
         {!session.info.isLoggedIn ? (
           <Button
             variant="outlined"
@@ -48,11 +71,6 @@ function Header(props) {
           </LogoutButton>
         )}
       </Toolbar>
-      <Toolbar
-        component="nav"
-        variant="dense"
-        sx={{ justifyContent: "space-between", overflowX: "auto" }}
-      ></Toolbar>
     </React.Fragment>
   );
 }

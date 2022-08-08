@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "@inrupt/solid-ui-react";
-import { fetchParticipantWebIDs } from "../utils/participantsHelper";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import {
+  fetchParticipantWebIDs,
+  fetchDataOfParticipants,
+} from "../utils/participantsHelper";
 
 const participants = {
   dummy1: {
@@ -37,13 +43,52 @@ export default function Participants() {
   const { session } = useSession();
   const solidFetch = session.fetch;
 
-  useEffect(() => {
-    const getParticipantWebID = async () => {
-      await fetchParticipantWebIDs(employeesUrl, participants, solidFetch);
-    };
-    getParticipantWebID();
-    console.log("once");
-  });
+  const [validParticipants, setValidParticipants] = useState([]);
+  const [invalidParticipants, setInvalidParticipants] = useState([]);
+  const [selectedParticipants, setSelectedParticipants] = useState([]);
 
-  return <>{session.info.isLoggedIn && <h2>Logged in!</h2>}</>;
+  // On load retrieve list of webIDs
+  useEffect(() => {
+    (async () => {
+      await fetchParticipantWebIDs(employeesUrl, participants, solidFetch);
+      console.log("All participants' WebIDs fetched (without data).");
+      await fetchDataOfParticipants(
+        participants,
+        solidFetch,
+        setValidParticipants,
+        setInvalidParticipants
+      );
+    })();
+  }, []);
+
+  return (
+    <>
+      {session.info.isLoggedIn && (
+        <>
+          <h3>Select participants:</h3>
+          <FormGroup>
+            {validParticipants.map((item) => (
+              <FormControlLabel
+                sx={{ margin: -1 }}
+                control={<Checkbox />}
+                label={item.id}
+                key={item.id}
+              />
+            ))}
+          </FormGroup>
+          <h3>Invalid participants:</h3>
+          <FormGroup>
+            {invalidParticipants.map((item) => (
+              <FormControlLabel
+                sx={{ margin: -1 }}
+                control={<Checkbox />}
+                label={item.id + item.error}
+                key={item.id}
+              />
+            ))}
+          </FormGroup>
+        </>
+      )}
+    </>
+  );
 }
