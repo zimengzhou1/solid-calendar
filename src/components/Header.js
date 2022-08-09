@@ -37,7 +37,7 @@ function Header(props) {
 
   return (
     <React.Fragment>
-      <Toolbar sx={{ borderBottom: 1, borderColor: "divider" }}>
+      <Toolbar sx={{ borderBottom: 1, borderColor: "divider", margin: 0 }}>
         <Button
           variant="outlined"
           size="small"

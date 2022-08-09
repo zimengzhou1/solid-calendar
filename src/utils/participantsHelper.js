@@ -1,5 +1,4 @@
 import { getRDFasJson } from "./fetchHelper";
-const N3 = require("n3");
 
 export async function fetchParticipantWebIDs(
   employeesUrl,
@@ -103,7 +102,8 @@ export async function fetchDataOfParticipants(
     }
     const participant = participants[id];
     let item = {};
-    item["id"] = participant.name || id;
+    item["name"] = participant.name || id;
+    item["id"] = id;
 
     if (participant.error || !participant.availabilityCalendar.url) {
       if (participant.error) {

@@ -1,16 +1,10 @@
 const N3 = require("n3");
-import dayjs from "dayjs";
 import jsonld from "jsonld";
-import { ReadableWebToNodeStream } from "readable-web-to-node-stream";
 
 export function getRDFasJson(url, frame, fetch) {
-  if (!fetch) {
-    throw new Error("No fetch function is provided.");
-  }
+  if (!fetch) throw new Error("No fetch function is provided.");
 
-  if (url.startsWith("test:")) {
-    return dummyData[url];
-  }
+  if (url.startsWith("test:")) return dummyData[url];
 
   return new Promise(async (resolve, reject) => {
     // mostly taken from ldfetch
@@ -31,17 +25,15 @@ export function getRDFasJson(url, frame, fetch) {
 
     try {
       const response = await fetch(url, myInit);
-
       if (response.status !== 200) {
         throw new Error(await response.text());
       }
 
       const turtle = await response.text();
       const parser = new N3.Parser({ format: "text/turtle", baseIRI: url });
-
       const quads = [];
 
-      parser.parse(turtle, (error, quad, prefixes) => {
+      parser.parse(turtle, (error, quad) => {
         if (error) {
           reject(error);
         } else if (quad) {
@@ -68,7 +60,6 @@ export function getRDFasJson(url, frame, fetch) {
         }
       });
     } catch (e) {
-      //console.error(e);
       reject(e);
     }
   });

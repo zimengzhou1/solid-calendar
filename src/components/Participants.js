@@ -4,10 +4,15 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
 import {
   fetchParticipantWebIDs,
   fetchDataOfParticipants,
 } from "../utils/participantsHelper";
+import {
+  downloadAvailabilityCalendar,
+  downloadVacationCalendar,
+} from "../utils/calendarHelper";
 
 const participants = {
   dummy1: {
@@ -60,21 +65,55 @@ export default function Participants() {
         setValidParticipants,
         setInvalidParticipants
       );
+      console.log(participants);
     })();
   }, []);
+
+  const downloadCalendars = async (webid) => {
+    console.log("Downloading calendars!");
+    try {
+      if (
+        participants[webid].availabilityCalendar.status === "not-downloaded"
+      ) {
+        await downloadAvailabilityCalendar(webid, participants, solidFetch);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    try {
+      let vacationStatus = participants[webid].vacationCalendar.status;
+      if (
+        vacationStatus === "not-downloaded" &&
+        vacationStatus !== "download-failed"
+      ) {
+        await downloadVacationCalendar(webid, participants, solidFetch);
+      }
+    } catch (e) {
+      console.log("Could not download vacation calendar.");
+    }
+  };
 
   return (
     <>
       {session.info.isLoggedIn && (
         <>
+          <Stack spacing={2} direction="row">
+            <Button variant="outlined">Find Slots</Button>
+            <Button variant="outlined">Show vacation days</Button>
+            <Button variant="outlined">Show only my slots</Button>
+          </Stack>
           <h3>Select participants:</h3>
-          <FormGroup>
+          <FormGroup sx={{ width: 1 / 2 }}>
             {validParticipants.map((item) => (
               <FormControlLabel
                 sx={{ margin: -1 }}
                 control={<Checkbox />}
-                label={item.id}
+                label={item.name}
                 key={item.id}
+                onClick={() => {
+                  downloadCalendars(item.id);
+                }}
               />
             ))}
           </FormGroup>
@@ -101,13 +140,13 @@ export default function Participants() {
             )}
           </div>
           {invalidToggle && (
-            <FormGroup>
+            <FormGroup sx={{ width: 3 / 4 }}>
               {invalidParticipants.map((item) => (
                 <FormControlLabel
                   disabled
                   sx={{ margin: -1 }}
                   control={<Checkbox />}
-                  label={item.id + item.error}
+                  label={item.name + item.error}
                   key={item.id}
                 />
               ))}
