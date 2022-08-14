@@ -56,18 +56,20 @@ export default function Participants() {
 
   // On load retrieve list of webIDs
   useEffect(() => {
-    (async () => {
-      await fetchParticipantWebIDs(employeesUrl, participants, solidFetch);
-      console.log("All participants' WebIDs fetched (without data).");
-      await fetchDataOfParticipants(
-        participants,
-        solidFetch,
-        setValidParticipants,
-        setInvalidParticipants
-      );
-      console.log(participants);
-    })();
-  }, []);
+    if (session.info.isLoggedIn) {
+      (async () => {
+        await fetchParticipantWebIDs(employeesUrl, participants, solidFetch);
+        console.log("All participants' WebIDs fetched (without data).");
+        await fetchDataOfParticipants(
+          participants,
+          solidFetch,
+          setValidParticipants,
+          setInvalidParticipants
+        );
+        console.log(participants);
+      })();
+    }
+  }, [session.info.isLoggedIn]);
 
   const downloadCalendars = async (webid) => {
     console.log("Downloading calendars!");

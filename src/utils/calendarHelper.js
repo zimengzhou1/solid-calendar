@@ -24,7 +24,14 @@ export async function downloadAvailabilityCalendar(
   const url = participants[webid].availabilityCalendar.url;
 
   try {
-    const data = await getRDFasJson(url, frame, solidFetch);
+    let data;
+    if (url.startsWith("test:")) {
+      console.log("got hereee!");
+      data = dummyData[url];
+    } else {
+      data = await getRDFasJson(url, frame, solidFetch);
+    }
+
     participants[webid].availabilityCalendar.data = data["@graph"] || data;
     participants[webid].availabilityCalendar.status = "downloaded";
 
@@ -90,7 +97,12 @@ export async function downloadVacationCalendar(
   };
 
   try {
-    const data = await getRDFasJson(url, frame, solidFetch);
+    let data;
+    if (url.startsWith("test:")) {
+      data = dummyData[url];
+    } else {
+      data = await getRDFasJson(url, frame, solidFetch);
+    }
 
     if (!Array.isArray(data.days)) {
       data.days = [data.days];

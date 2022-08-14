@@ -30,6 +30,7 @@ export function getRDFasJson(url, frame, fetch) {
       }
 
       const turtle = await response.text();
+      console.log(turtle);
       const parser = new N3.Parser({ format: "text/turtle", baseIRI: url });
       const quads = [];
 

@@ -41,7 +41,11 @@ export default function Home() {
       </Head>
 
       <main>
-        {session.info.isLoggedIn && <p>Welcome {name}</p>}
+        {session.info.isLoggedIn ? (
+          <p>Welcome {name}</p>
+        ) : (
+          <p>Not logged in!</p>
+        )}
         <Participants />
       </main>
     </div>
