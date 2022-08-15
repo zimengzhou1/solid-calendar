@@ -9,10 +9,6 @@ export default function Home() {
   const { session } = useSession();
   const [name, setName] = useState("");
 
-  if (session.info.isLoggedIn) {
-    console.log(session);
-  }
-
   useEffect(() => {
     const webID = session.info.webId;
     if (webID !== undefined) {
@@ -44,7 +40,14 @@ export default function Home() {
         {session.info.isLoggedIn ? (
           <p>Welcome {name}</p>
         ) : (
-          <p>Not logged in!</p>
+          <>
+            <h3>What is this app?</h3>
+            <p>
+              KNoodle is KNoWS' Solid-based alternative to Doodle. It allows you
+              to find time slots that work for different people, by using their
+              availability calendar which is made available through a Solid pod.
+            </p>
+          </>
         )}
         <Participants />
       </main>

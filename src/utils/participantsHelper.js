@@ -50,6 +50,13 @@ export async function fetchDataOfParticipants(
           "@id": id,
         };
 
+        // hack
+        console.log("curr id:", id);
+        if (
+          id === "https://elsdvlee.pod.knows.idlab.ugent.be/profile/card#me"
+        ) {
+          continue;
+        }
         const result = await getRDFasJson(id, frame, fetch);
         if (result.length === 0) {
           participants[id].error = "No results in JSON-LD";
