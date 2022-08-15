@@ -22,29 +22,6 @@ function CustomDrawer(props) {
   const { session } = useSession();
   const router = useRouter();
 
-  let loginButton;
-  if (session) {
-    if (session.info.isLoggedIn) {
-      loginButton = (
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={() => router.push(`/login`)}
-        >
-          Login
-        </Button>
-      );
-    } else {
-      loginButton = (
-        <LogoutButton onLogout={() => console.log("logged out!")}>
-          <Button variant="outlined" size="small">
-            Log out
-          </Button>
-        </LogoutButton>
-      );
-    }
-  }
-
   return (
     <React.Fragment>
       <Drawer
@@ -64,7 +41,9 @@ function CustomDrawer(props) {
             {["Homepage", "Availability", "Contacts", "Meetings"].map(
               (text, index) => (
                 <ListItem key={text} disablePadding>
-                  <ListItemButton>
+                  <ListItemButton
+                    onClick={() => router.push("/" + text.toLowerCase())}
+                  >
                     <ListItemIcon>
                       {index === 0 && <HomeIcon />}
                       {index === 1 && <EventAvailableIcon />}

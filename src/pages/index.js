@@ -1,12 +1,11 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useSession } from "@inrupt/solid-ui-react";
-import Participants from "../components/Participants";
 import { getPersonName } from "../utils/participantsHelper";
 import { getRDFasJson } from "../utils/fetchHelper";
 
 export default function Home() {
-  const { session } = useSession();
+  const { session, sessionRequestInProgress } = useSession();
   const [name, setName] = useState("");
 
   useEffect(() => {
@@ -28,6 +27,11 @@ export default function Home() {
     }
   }, [session.info.webId]);
 
+  if (sessionRequestInProgress) {
+    console.log(sessionRequestInProgress);
+    return <p>loading...</p>;
+  }
+
   return (
     <div>
       <Head>
@@ -38,7 +42,18 @@ export default function Home() {
 
       <main>
         {session.info.isLoggedIn ? (
-          <p>Welcome {name}</p>
+          <>
+            <p>Welcome {name}!</p>
+            <h3>Availability Page</h3>
+            <p>View or edit your schedules on this page</p>
+            <h3>Contacts Page</h3>
+            <p>View your contacts and arrange meetings</p>
+            <h3>Meetings Page</h3>
+            <p>
+              View or edit your booked meetings that have been booked through
+              knoodle
+            </p>
+          </>
         ) : (
           <>
             <h3>What is this app?</h3>
@@ -47,9 +62,9 @@ export default function Home() {
               to find time slots that work for different people, by using their
               availability calendar which is made available through a Solid pod.
             </p>
+            <p>To get started, login/sign up with a pod provider!</p>
           </>
         )}
-        <Participants />
       </main>
     </div>
   );
