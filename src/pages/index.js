@@ -29,7 +29,7 @@ export default function Home() {
 
   if (sessionRequestInProgress) {
     console.log(sessionRequestInProgress);
-    return <p>loading...</p>;
+    return <p>Loading...</p>;
   }
 
   return (

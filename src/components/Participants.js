@@ -54,22 +54,17 @@ export default function Participants() {
   const [invalidToggle, setInvalidToggle] = useState(false);
   const [selectedParticipants, setSelectedParticipants] = useState([]);
 
-  // On load retrieve list of webIDs
-  useEffect(() => {
-    if (session.info.isLoggedIn) {
-      (async () => {
-        await fetchParticipantWebIDs(employeesUrl, participants, solidFetch);
-        console.log("All participants' WebIDs fetched (without data).");
-        await fetchDataOfParticipants(
-          participants,
-          solidFetch,
-          setValidParticipants,
-          setInvalidParticipants
-        );
-        console.log(participants);
-      })();
-    }
-  }, [session.info.isLoggedIn]);
+  const fetchAvailability = async () => {
+    await fetchParticipantWebIDs(employeesUrl, participants, solidFetch);
+    console.log("All participants' WebIDs fetched (without data).");
+    await fetchDataOfParticipants(
+      participants,
+      solidFetch,
+      setValidParticipants,
+      setInvalidParticipants
+    );
+    console.log(participants);
+  };
 
   const downloadCalendars = async (webid) => {
     console.log("Downloading calendars!");
@@ -101,9 +96,16 @@ export default function Participants() {
       {session.info.isLoggedIn && (
         <>
           <Stack spacing={2} direction="row">
-            <Button variant="outlined">Find Slots</Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                fetchAvailability();
+              }}
+            >
+              Fetch friends availability
+            </Button>
+            <Button variant="outlined">Find availability</Button>
             <Button variant="outlined">Show vacation days</Button>
-            <Button variant="outlined">Show only my slots</Button>
           </Stack>
           <h3>Select participants:</h3>
           <FormGroup sx={{ width: 1 / 2 }}>

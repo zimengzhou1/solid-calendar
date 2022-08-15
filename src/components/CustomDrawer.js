@@ -42,7 +42,10 @@ function CustomDrawer(props) {
               (text, index) => (
                 <ListItem key={text} disablePadding>
                   <ListItemButton
-                    onClick={() => router.push("/" + text.toLowerCase())}
+                    onClick={() => {
+                      if (text == "Homepage") router.push("/");
+                      else router.push("/" + text.toLowerCase());
+                    }}
                   >
                     <ListItemIcon>
                       {index === 0 && <HomeIcon />}
