@@ -1,6 +1,5 @@
 import * as React from "react";
 import Toolbar from "@mui/material/Toolbar";
-import Button from "@mui/material/Button";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import ContactsIcon from "@mui/icons-material/Contacts";
 import GroupsIcon from "@mui/icons-material/Groups";
@@ -13,13 +12,10 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useRouter } from "next/router";
-import { useSession, LogoutButton } from "@inrupt/solid-ui-react";
 
 const drawerWidth = 200;
 
 function CustomDrawer(props) {
-  const { title } = props;
-  const { session } = useSession();
   const router = useRouter();
 
   return (
@@ -38,12 +34,14 @@ function CustomDrawer(props) {
         <Toolbar />
         <Box sx={{ overflow: "auto" }}>
           <List>
-            {["Homepage", "Availability", "Contacts", "Meetings"].map(
+            {["Homepage", "Availability", "Schedule Meeting", "Meetings"].map(
               (text, index) => (
                 <ListItem key={text} disablePadding>
                   <ListItemButton
                     onClick={() => {
                       if (text == "Homepage") router.push("/");
+                      else if (text == "Schedule Meeting")
+                        router.push("/contacts");
                       else router.push("/" + text.toLowerCase());
                     }}
                   >

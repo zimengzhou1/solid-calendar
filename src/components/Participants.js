@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import PeopleDrawer from "../components/PeopleDrawer";
 import { useSession } from "@inrupt/solid-ui-react";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import {
@@ -94,69 +93,25 @@ export default function Participants() {
   return (
     <>
       {session.info.isLoggedIn && (
-        <>
-          <Stack spacing={2} direction="row">
-            <Button
-              variant="outlined"
-              onClick={() => {
-                fetchAvailability();
-              }}
-            >
-              Fetch friends availability
-            </Button>
+        <Box>
+          <Stack
+            spacing={2}
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+          >
             <Button variant="outlined">Find availability</Button>
             <Button variant="outlined">Show vacation days</Button>
           </Stack>
-          <h3>Select participants:</h3>
-          <FormGroup sx={{ width: 1 / 2 }}>
-            {validParticipants.map((item) => (
-              <FormControlLabel
-                sx={{ margin: -1 }}
-                control={<Checkbox />}
-                label={item.name}
-                key={item.id}
-                onClick={() => {
-                  downloadCalendars(item.id);
-                }}
-              />
-            ))}
-          </FormGroup>
-          <div style={{ display: "inline-block" }}>
-            <h3>Invalid participants: {invalidParticipants.length}</h3>
-          </div>
-          <div style={{ display: "inline-block", padding: 4 }}>
-            {invalidToggle ? (
-              <Button
-                onClick={() => setInvalidToggle(false)}
-                size="small"
-                variant="outlined"
-              >
-                Hide
-              </Button>
-            ) : (
-              <Button
-                onClick={() => setInvalidToggle(true)}
-                size="small"
-                variant="outlined"
-              >
-                Show
-              </Button>
-            )}
-          </div>
-          {invalidToggle && (
-            <FormGroup sx={{ width: 3 / 4 }}>
-              {invalidParticipants.map((item) => (
-                <FormControlLabel
-                  disabled
-                  sx={{ margin: -1 }}
-                  control={<Checkbox />}
-                  label={item.name + item.error}
-                  key={item.id}
-                />
-              ))}
-            </FormGroup>
-          )}
-        </>
+
+          <PeopleDrawer
+            getContacts={fetchAvailability}
+            validParticipants={validParticipants}
+            invalidParticipants={invalidParticipants}
+            selectedParticipants={selectedParticipants}
+            setSelectedParticipants={setSelectedParticipants}
+          />
+        </Box>
       )}
     </>
   );
