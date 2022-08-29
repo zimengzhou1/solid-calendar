@@ -41,7 +41,7 @@ function CustomDrawer(props) {
                     onClick={() => {
                       if (text == "Homepage") router.push("/");
                       else if (text == "Schedule Meeting")
-                        router.push("/contacts");
+                        router.push("/schedule-meeting");
                       else router.push("/" + text.toLowerCase());
                     }}
                   >

@@ -1,7 +1,13 @@
+import CustomCalendar from "../components/CustomCalendar";
+import Box from "@mui/material/Box";
+
 export default function Availability() {
   return (
     <>
-      <h3>This is the availability page!</h3>
+      <h3>View your availability:</h3>
+      <Box sx={{ height: "80vh", mx: 3 }}>
+        <CustomCalendar />
+      </Box>
     </>
   );
 }

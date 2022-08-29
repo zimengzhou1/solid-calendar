@@ -30,20 +30,8 @@ function PeopleDrawer({
   };
 
   return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        [`& .MuiDrawer-paper`]: {
-          width: drawerWidth,
-          boxSizing: "border-box",
-        },
-      }}
-      anchor="right"
-    >
-      <Toolbar />
-      <Box sx={{ p: 3 }}>
+    <>
+      <Box m="auto">
         <Button
           variant="outlined"
           onClick={() => {
@@ -57,7 +45,7 @@ function PeopleDrawer({
         <FormGroup>
           {validParticipants.map((item) => (
             <FormControlLabel
-              sx={{ margin: -1 }}
+              sx={{ margin: 0 }}
               control={<Checkbox />}
               label={item.name}
               key={item.id}
@@ -101,7 +89,7 @@ function PeopleDrawer({
           )}
         </div>
       </Box>
-    </Drawer>
+    </>
   );
 }
 

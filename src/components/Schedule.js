@@ -1,9 +1,15 @@
 import React, { useState } from "react";
+import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
 import PeopleDrawer from "../components/PeopleDrawer";
 import { useSession } from "@inrupt/solid-ui-react";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import CustomTimePicker from "./TimePicker";
+import CustomCalendar from "./CustomCalendar";
 import {
   fetchParticipantWebIDs,
   fetchDataOfParticipants,
@@ -12,7 +18,14 @@ import {
   downloadAvailabilityCalendar,
   downloadVacationCalendar,
 } from "../utils/calendarHelper";
-import TimePicker from "./TimePicker";
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+}));
 
 const participants = {
   dummy1: {
@@ -45,7 +58,7 @@ const participants = {
 const employeesUrl =
   "https://data.knows.idlab.ugent.be/person/office/employees.ttl";
 
-export default function Participants() {
+export default function Schedule() {
   const { session } = useSession();
   const solidFetch = session.fetch;
 
@@ -65,54 +78,42 @@ export default function Participants() {
     console.log(participants);
   };
 
-  const downloadCalendars = async (webid) => {
-    console.log("Downloading calendars!");
-    try {
-      if (
-        participants[webid].availabilityCalendar.status === "not-downloaded"
-      ) {
-        await downloadAvailabilityCalendar(webid, participants, solidFetch);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-
-    try {
-      let vacationStatus = participants[webid].vacationCalendar.status;
-      if (
-        vacationStatus === "not-downloaded" &&
-        vacationStatus !== "download-failed"
-      ) {
-        await downloadVacationCalendar(webid, participants, solidFetch);
-      }
-    } catch (e) {
-      console.log("Could not download vacation calendar.");
-    }
-  };
-
   return (
     <>
       {session.info.isLoggedIn && (
-        <Box>
-          <Stack
-            spacing={2}
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Button variant="outlined">Find availability</Button>
-            <Button variant="outlined">Show vacation days</Button>
-          </Stack>
+        <Box height="100vh" width="100%" display="flex">
+          <Grid container spacing={4}>
+            <Grid item xs={9}>
+              {/* <Divider flexItem /> */}
+              <Stack
+                spacing={2}
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mb: 3 }}
+              >
+                <Button variant="outlined">Find availability</Button>
+                <Button variant="outlined">Show vacation days</Button>
+              </Stack>
+              <Box sx={{ height: "60%" }}>
+                <CustomCalendar />
+              </Box>
+              <Box sx={{ m: 5 }} />
+              <CustomTimePicker />
 
-          <TimePicker />
+              <Box sx={{ m: 5 }} />
+            </Grid>
 
-          <PeopleDrawer
-            getContacts={fetchAvailability}
-            validParticipants={validParticipants}
-            invalidParticipants={invalidParticipants}
-            selectedParticipants={selectedParticipants}
-            setSelectedParticipants={setSelectedParticipants}
-          />
+            <Grid item xs={3}>
+              <PeopleDrawer
+                getContacts={fetchAvailability}
+                validParticipants={validParticipants}
+                invalidParticipants={invalidParticipants}
+                selectedParticipants={selectedParticipants}
+                setSelectedParticipants={setSelectedParticipants}
+              />
+            </Grid>
+          </Grid>
         </Box>
       )}
     </>

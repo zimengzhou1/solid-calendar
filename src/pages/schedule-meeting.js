@@ -1,10 +1,11 @@
 import Box from "@mui/material/Box";
 import Participants from "../components/Participants";
+import Schedule from "../components/Schedule";
 
-export default function Contacts() {
+export default function ScheduleMeeting() {
   return (
     <Box sx={{ display: "flex" }}>
-      <Participants />
+      <Schedule />
     </Box>
   );
 }
