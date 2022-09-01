@@ -66,6 +66,8 @@ export default function Schedule() {
   const [invalidParticipants, setInvalidParticipants] = useState([]);
   const [selectedParticipants, setSelectedParticipants] = useState([]);
   const [availableEvents, setAvailableEvents] = useState([]);
+  const [startTime, setStartTime] = useState(new Date());
+  const [endTime, setEndTime] = useState(new Date());
 
   const fetchContacts = async () => {
     await fetchParticipantWebIDs(employeesUrl, participants, solidFetch);
@@ -77,6 +79,12 @@ export default function Schedule() {
       setInvalidParticipants
     );
     console.log(participants);
+  };
+
+  const clickEvent = (e) => {
+    let { start, end } = e;
+    setStartTime(start);
+    setEndTime(end);
   };
 
   const createEvents = (slots) => {
@@ -170,10 +178,18 @@ export default function Schedule() {
                 <Button variant="outlined">Show vacation days</Button>
               </Stack>
               <Box sx={{ height: "60%" }}>
-                <CustomCalendar availableEvents={availableEvents} />
+                <CustomCalendar
+                  availableEvents={availableEvents}
+                  clickEvent={clickEvent}
+                />
               </Box>
               <Box sx={{ m: 5 }} />
-              <CustomTimePicker />
+              <CustomTimePicker
+                startTime={startTime}
+                setStartTime={setStartTime}
+                endTime={endTime}
+                setEndTime={setEndTime}
+              />
               <Box sx={{ m: 5 }} />
             </Grid>
 

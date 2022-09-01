@@ -5,13 +5,21 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import Button from "@mui/material/Button";
+import { google } from "calendar-link";
 
-export default function CustomTimePicker() {
-  const [startTime, setStartTime] = useState(new Date());
-  const [endTime, setEndTime] = useState(new Date());
-
+export default function CustomTimePicker({
+  startTime,
+  setStartTime,
+  endTime,
+  setEndTime,
+}) {
   const addToCal = () => {
-    console.log("clicked");
+    const event = {
+      title: "Meeting scheduled using solid",
+      start: startTime,
+      end: endTime,
+    };
+    window.open(google(event));
   };
 
   return (
@@ -34,7 +42,13 @@ export default function CustomTimePicker() {
         />
       </Stack>
       <h4>Select your calendar:</h4>
-      <Button sx={{ mb: 4 }} variant="outlined">
+      <Button
+        onClick={(e) => {
+          addToCal();
+        }}
+        sx={{ mb: 4 }}
+        variant="outlined"
+      >
         Schedule meeting using Google Calendar
       </Button>
     </LocalizationProvider>

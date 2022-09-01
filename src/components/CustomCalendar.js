@@ -16,17 +16,12 @@ const mLocalizer = momentLocalizer(moment);
 const ColoredDateCellWrapper = ({ children }) =>
   React.cloneElement(React.Children.only(children), {
     style: {
-      backgroundColor: "lightblue",
+      backgroundColor: "white",
     },
   });
 
 export default function CustomCalendar({ localizer = mLocalizer, ...props }) {
-  // let temp = new Date(2015, 17, 1);
-  // console.log(temp.toDateString());
-  // console.log(
-  //   dates.add(dates.endOf(new Date(2015, 17, 1), "day"), -1, "hours")
-  // );
-  let { availableEvents } = props;
+  let { availableEvents, clickEvent } = props;
 
   const { components, defaultDate, max, views } = useMemo(
     () => ({
@@ -52,7 +47,7 @@ export default function CustomCalendar({ localizer = mLocalizer, ...props }) {
       step={60}
       views={views}
       defaultView={"week"}
-      onSelectEvent={(e) => console.log(e)}
+      onSelectEvent={clickEvent}
     />
   );
 }
