@@ -1,19 +1,17 @@
 import React, { useState } from "react";
-import dayjs from "dayjs";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
-import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import Button from "@mui/material/Button";
 
 export default function CustomTimePicker() {
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [startTime, setStartTime] = useState(new Date());
+  const [endTime, setEndTime] = useState(new Date());
 
-  const handleChange = (newValue) => {
-    setSelectedDate(newValue);
+  const addToCal = () => {
+    console.log("clicked");
   };
 
   return (
@@ -23,19 +21,22 @@ export default function CustomTimePicker() {
         <DateTimePicker
           label="Meeting Start Date"
           inputVariant="outlined"
-          value={selectedDate}
-          onChange={handleChange}
+          value={startTime}
+          onChange={setStartTime}
           renderInput={(params) => <TextField {...params} />}
         />
         <DateTimePicker
           label="Meeting End Date"
           inputVariant="outlined"
-          value={selectedDate}
-          onChange={handleChange}
+          value={endTime}
+          onChange={setEndTime}
           renderInput={(params) => <TextField {...params} />}
         />
       </Stack>
       <h4>Select your calendar:</h4>
+      <Button sx={{ mb: 4 }} variant="outlined">
+        Schedule meeting using Google Calendar
+      </Button>
     </LocalizationProvider>
   );
 }

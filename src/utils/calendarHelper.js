@@ -26,7 +26,7 @@ export async function downloadAvailabilityCalendar(
   try {
     let data;
     if (url.startsWith("test:")) {
-      console.log("got hereee!");
+      console.log("fetching dummy data...");
       data = dummyData[url];
     } else {
       data = await getRDFasJson(url, frame, solidFetch);

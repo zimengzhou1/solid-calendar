@@ -51,7 +51,7 @@ export default function Home() {
             <h3>Meetings Page</h3>
             <p>
               View or edit your booked meetings that have been booked through
-              knoodle
+              solid calendar
             </p>
           </>
         ) : (
