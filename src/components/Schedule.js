@@ -66,6 +66,7 @@ export default function Schedule() {
   const [invalidParticipants, setInvalidParticipants] = useState([]);
   const [selectedParticipants, setSelectedParticipants] = useState([]);
   const [availableEvents, setAvailableEvents] = useState([]);
+  const [vacationEvents, setVacationEvents] = useState([]);
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
 
@@ -87,20 +88,67 @@ export default function Schedule() {
     setEndTime(end);
   };
 
-  const createEvents = (slots) => {
+  const createAvailabilityEvents = (slots) => {
     let events = [];
     for (let e of slots) {
       events.push({
         title: "Available",
+        type: "availability",
         start: new Date(e["startDate"]),
         end: new Date(e["endDate"]),
       });
     }
+    setVacationEvents([]);
     setAvailableEvents(events);
   };
 
+  const createVacationEvents = (slots) => {
+    let events = [];
+    for (let e of slots) {
+      events.push({
+        title: "Vacation",
+        type: "vacation",
+        allDay: true,
+        start: new Date(e["date"]),
+        end: new Date(e["date"]),
+      });
+    }
+    setVacationEvents(events);
+  };
+
+  const showVacation = async () => {
+    console.log("Downloading vacation calendar!");
+    let error = undefined;
+
+    let webid = selectedParticipants[0];
+    try {
+      let vacationStatus = participants[webid].vacationCalendar.status;
+      if (
+        vacationStatus === "not-downloaded" &&
+        vacationStatus !== "download-failed"
+      ) {
+        await downloadVacationCalendar(webid, participants, solidFetch);
+      }
+    } catch (e) {
+      console.log("Could not download vacation calendar.");
+    }
+
+    if (participants[webid].vacationCalendar.status === "download-failed") {
+      error = participants[webid].vacationCalendar.error;
+    }
+
+    let days = undefined;
+
+    if (!error) {
+      days = participants[webid].vacationCalendar.data;
+      createVacationEvents(days);
+    }
+
+    console.log(days);
+  };
+
   const showAvailability = async () => {
-    console.log("Downloading calendars!");
+    console.log("Downloading availability calendars!");
     const calendars = [];
     let error = undefined;
 
@@ -114,19 +162,6 @@ export default function Schedule() {
         }
       } catch (e) {
         console.log(e);
-      }
-
-      // Download vacation
-      try {
-        let vacationStatus = participants[webid].vacationCalendar.status;
-        if (
-          vacationStatus === "not-downloaded" &&
-          vacationStatus !== "download-failed"
-        ) {
-          await downloadVacationCalendar(webid, participants, solidFetch);
-        }
-      } catch (e) {
-        console.log("Could not download vacation calendar.");
       }
 
       if (
@@ -147,7 +182,7 @@ export default function Schedule() {
       } else {
         slots = calendars[0];
       }
-      createEvents(slots);
+      createAvailabilityEvents(slots);
     } else {
       console.log("download error: ", e);
     }
@@ -169,17 +204,25 @@ export default function Schedule() {
               >
                 <Button
                   variant="outlined"
-                  onClick={(e) => {
+                  onClick={() => {
                     showAvailability();
                   }}
                 >
                   Find availability
                 </Button>
-                <Button variant="outlined">Show vacation days</Button>
+                <Button
+                  onClick={() => {
+                    showVacation();
+                  }}
+                  variant="outlined"
+                >
+                  Show vacation days
+                </Button>
               </Stack>
               <Box sx={{ height: "60%" }}>
                 <CustomCalendar
                   availableEvents={availableEvents}
+                  vacationEvents={vacationEvents}
                   clickEvent={clickEvent}
                 />
               </Box>

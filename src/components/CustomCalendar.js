@@ -21,7 +21,7 @@ const ColoredDateCellWrapper = ({ children }) =>
   });
 
 export default function CustomCalendar({ localizer = mLocalizer, ...props }) {
-  let { availableEvents, clickEvent } = props;
+  let { availableEvents, vacationEvents, clickEvent } = props;
 
   const { components, defaultDate, max, views } = useMemo(
     () => ({
@@ -39,7 +39,7 @@ export default function CustomCalendar({ localizer = mLocalizer, ...props }) {
     <Calendar
       components={components}
       defaultDate={defaultDate}
-      events={availableEvents}
+      events={availableEvents.concat(vacationEvents)}
       localizer={localizer}
       min={localizer.startOf(new Date(), "day")}
       max={max}
@@ -48,6 +48,24 @@ export default function CustomCalendar({ localizer = mLocalizer, ...props }) {
       views={views}
       defaultView={"week"}
       onSelectEvent={clickEvent}
+      eventPropGetter={(event, start, end, isSelected) => {
+        if (event["type"] == "vacation") {
+          return {
+            event,
+            start,
+            end,
+            isSelected,
+            style: { backgroundColor: "green" },
+          };
+        } else {
+          return {
+            event,
+            start,
+            end,
+            isSelected,
+          };
+        }
+      }}
     />
   );
 }
