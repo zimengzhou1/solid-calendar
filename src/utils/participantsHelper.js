@@ -1,5 +1,26 @@
 import { getRDFasJson } from "./fetchHelper";
 
+export async function fetchContacts(
+  participants,
+  solidFetch,
+  setValidParticipants,
+  setInvalidParticipants
+) {
+  const employeesUrl =
+    "https://data.knows.idlab.ugent.be/person/office/employees.ttl";
+
+  await fetchParticipantWebIDs(employeesUrl, participants, solidFetch);
+  console.log("All participants' WebIDs fetched (without data).");
+  await fetchDataOfParticipants(
+    participants,
+    solidFetch,
+    setValidParticipants,
+    setInvalidParticipants
+  );
+  console.log("All participants' WebIDs fetched (with data).");
+  console.log(participants);
+}
+
 export async function fetchParticipantWebIDs(
   employeesUrl,
   participants,
@@ -13,7 +34,7 @@ export async function fetchParticipantWebIDs(
   };
 
   const result = await getRDFasJson(employeesUrl, frame, fetch);
-  console.log("my result:");
+  console.log("My fetched contacts:");
   console.log(result);
   const ids = result.employee.map((a) => a["@id"]);
 
@@ -31,7 +52,7 @@ export async function fetchDataOfParticipants(
   setInvalid
 ) {
   const webids = Object.keys(participants);
-  console.log(webids);
+
   let validList = [];
   let invalidList = [];
 
@@ -51,7 +72,7 @@ export async function fetchDataOfParticipants(
         };
 
         // hack
-        console.log("curr id:", id);
+        //console.log("curr webid:", id);
         if (
           id === "https://elsdvlee.pod.knows.idlab.ugent.be/profile/card#me"
         ) {

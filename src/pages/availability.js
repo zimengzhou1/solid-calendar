@@ -6,7 +6,11 @@ export default function Availability() {
     <>
       <h3>View your availability:</h3>
       <Box sx={{ height: "80vh", mx: 3 }}>
-        <CustomCalendar />
+        <CustomCalendar
+          availableEvents={[]}
+          vacationEvents={[]}
+          clickEvent={() => {}}
+        />
       </Box>
     </>
   );

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { useSession, LoginButton } from "@inrupt/solid-ui-react";
+import { LoginButton } from "@inrupt/solid-ui-react";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";

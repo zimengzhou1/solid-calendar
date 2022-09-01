@@ -9,6 +9,64 @@ const dummyData = {
   "test:dummy2-vacation": getDummyVacationDays(3),
 };
 
+export async function downloadSelectedAvailability(
+  selectedParticipants,
+  participants,
+  solidFetch
+) {
+  const calendars = [];
+  let error = undefined;
+
+  for (let webid of selectedParticipants) {
+    // Download calendar
+    try {
+      if (
+        participants[webid].availabilityCalendar.status === "not-downloaded"
+      ) {
+        await downloadAvailabilityCalendar(webid, participants, solidFetch);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    if (participants[webid].availabilityCalendar.status === "download-failed") {
+      error = participants[webid].availabilityCalendar.error;
+      break;
+    }
+
+    calendars.push(participants[webid].availabilityCalendar.data);
+  }
+
+  return { calendars, error };
+}
+
+export async function downloadSelectedVacation(
+  selectedParticipants,
+  participants,
+  solidFetch
+) {
+  let error = undefined;
+
+  let webid = selectedParticipants[0];
+  try {
+    let vacationStatus = participants[webid].vacationCalendar.status;
+    if (
+      vacationStatus === "not-downloaded" &&
+      vacationStatus !== "download-failed"
+    ) {
+      await downloadVacationCalendar(webid, participants, solidFetch);
+    }
+  } catch (e) {
+    console.log("Could not download vacation calendar.");
+  }
+
+  if (participants[webid].vacationCalendar.status === "download-failed") {
+    error = participants[webid].vacationCalendar.error;
+  }
+
+  return error;
+}
+
 export async function downloadAvailabilityCalendar(
   webid,
   participants,

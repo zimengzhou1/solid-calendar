@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import PeopleDrawer from "../components/PeopleDrawer";
 import { useSession } from "@inrupt/solid-ui-react";
@@ -10,22 +8,11 @@ import Stack from "@mui/material/Stack";
 import CustomTimePicker from "./TimePicker";
 import CustomCalendar from "./CustomCalendar";
 import { intersect } from "../utils/dates";
+import { fetchContacts } from "../utils/participantsHelper";
 import {
-  fetchParticipantWebIDs,
-  fetchDataOfParticipants,
-} from "../utils/participantsHelper";
-import {
-  downloadAvailabilityCalendar,
-  downloadVacationCalendar,
+  downloadSelectedAvailability,
+  downloadSelectedVacation,
 } from "../utils/calendarHelper";
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
 
 const participants = {
   dummy1: {
@@ -55,8 +42,6 @@ const participants = {
     },
   },
 };
-const employeesUrl =
-  "https://data.knows.idlab.ugent.be/person/office/employees.ttl";
 
 export default function Schedule() {
   const { session } = useSession();
@@ -69,18 +54,6 @@ export default function Schedule() {
   const [vacationEvents, setVacationEvents] = useState([]);
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
-
-  const fetchContacts = async () => {
-    await fetchParticipantWebIDs(employeesUrl, participants, solidFetch);
-    console.log("All participants' WebIDs fetched (without data).");
-    await fetchDataOfParticipants(
-      participants,
-      solidFetch,
-      setValidParticipants,
-      setInvalidParticipants
-    );
-    console.log(participants);
-  };
 
   const clickEvent = (e) => {
     let { start, end } = e;
@@ -117,65 +90,28 @@ export default function Schedule() {
   };
 
   const showVacation = async () => {
-    console.log("Downloading vacation calendar!");
-    let error = undefined;
-
-    let webid = selectedParticipants[0];
-    try {
-      let vacationStatus = participants[webid].vacationCalendar.status;
-      if (
-        vacationStatus === "not-downloaded" &&
-        vacationStatus !== "download-failed"
-      ) {
-        await downloadVacationCalendar(webid, participants, solidFetch);
-      }
-    } catch (e) {
-      console.log("Could not download vacation calendar.");
-    }
-
-    if (participants[webid].vacationCalendar.status === "download-failed") {
-      error = participants[webid].vacationCalendar.error;
-    }
+    let error = await downloadSelectedVacation(
+      selectedParticipants,
+      participants,
+      solidFetch
+    );
 
     let days = undefined;
-
+    let webid = selectedParticipants[0];
     if (!error) {
       days = participants[webid].vacationCalendar.data;
       createVacationEvents(days);
     }
-
-    console.log(days);
   };
 
   const showAvailability = async () => {
-    console.log("Downloading availability calendars!");
-    const calendars = [];
-    let error = undefined;
-
-    for (let webid of selectedParticipants) {
-      // Download calendar
-      try {
-        if (
-          participants[webid].availabilityCalendar.status === "not-downloaded"
-        ) {
-          await downloadAvailabilityCalendar(webid, participants, solidFetch);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-
-      if (
-        participants[webid].availabilityCalendar.status === "download-failed"
-      ) {
-        error = participants[webid].availabilityCalendar.error;
-        break;
-      }
-
-      calendars.push(participants[webid].availabilityCalendar.data);
-    }
+    let { calendars, error } = await downloadSelectedAvailability(
+      selectedParticipants,
+      participants,
+      solidFetch
+    );
 
     let slots = undefined;
-
     if (!error) {
       if (calendars.length > 1) {
         slots = intersect(...calendars);
@@ -184,7 +120,7 @@ export default function Schedule() {
       }
       createAvailabilityEvents(slots);
     } else {
-      console.log("download error: ", e);
+      console.log("Download error: ", e);
     }
   };
 
@@ -194,7 +130,6 @@ export default function Schedule() {
         <Box height="100vh" width="100%" display="flex">
           <Grid container spacing={4}>
             <Grid item xs={9}>
-              {/* <Divider flexItem /> */}
               <Stack
                 spacing={2}
                 direction="row"
@@ -238,7 +173,14 @@ export default function Schedule() {
 
             <Grid item xs={3}>
               <PeopleDrawer
-                getContacts={fetchContacts}
+                getContacts={() =>
+                  fetchContacts(
+                    participants,
+                    solidFetch,
+                    setValidParticipants,
+                    setInvalidParticipants
+                  )
+                }
                 validParticipants={validParticipants}
                 invalidParticipants={invalidParticipants}
                 selectedParticipants={selectedParticipants}

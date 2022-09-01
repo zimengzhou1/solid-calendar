@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import Box from "@mui/material/Box";
 import moment from "moment";
 import {
   Calendar,
@@ -8,8 +7,6 @@ import {
   momentLocalizer,
 } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import events from "../data/events";
-import * as dates from "../utils/dates";
 
 const mLocalizer = momentLocalizer(moment);
 
