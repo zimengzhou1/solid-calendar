@@ -16,6 +16,7 @@ const providers = [
   { title: "solidcommunity.net", url: "https://solidcommunity.net/" },
   { title: "Solid Web", url: "https://solidweb.org/" },
   { title: "Trinpod", url: "https://trinpod.us/" },
+  { title: "Oxford", url: "https://test.pod.ewada.ox.ac.uk" },
 ];
 
 export default function Login() {
@@ -56,15 +57,11 @@ export default function Login() {
                 setProvider(event.target.value);
               }}
             >
-              <MenuItem value="https://broker.pod.inrupt.com/">
-                Inrupt Pod Spaces
-              </MenuItem>
-              <MenuItem value="https://inrupt.net/">inrupt.net</MenuItem>
-              <MenuItem value="https://solidcommunity.net/">
-                Solid Community
-              </MenuItem>
-              <MenuItem value="https://solidweb.org/">Solid Web</MenuItem>
-              <MenuItem value="https://trinpod.us/">Solid Trinpod</MenuItem>
+              {providers.map((item, idx) => (
+                <MenuItem key={idx} value={item["url"]}>
+                  {item["title"]}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <LoginButton
