@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import PeopleDrawer from "../components/PeopleDrawer";
+import { useUrl } from "../context/UrlContext";
 import { useSession } from "@inrupt/solid-ui-react";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
@@ -10,6 +11,7 @@ import CustomCalendar from "./CustomCalendar";
 import CustomAlert from "./Alert";
 import { intersect } from "../utils/dates";
 import { fetchContacts } from "../utils/participantsHelper";
+import { createAvailabilityEvents } from "../utils/calendarHelper";
 import {
   downloadSelectedAvailability,
   downloadSelectedVacation,
@@ -47,6 +49,7 @@ const participants = {
 export default function Schedule() {
   const { session } = useSession();
   const solidFetch = session.fetch;
+  const [contactUrl, setContactUrl] = useUrl();
 
   const [validParticipants, setValidParticipants] = useState([]);
   const [invalidParticipants, setInvalidParticipants] = useState([]);
@@ -63,20 +66,6 @@ export default function Schedule() {
     let { start, end } = e;
     setStartTime(start);
     setEndTime(end);
-  };
-
-  const createAvailabilityEvents = (slots) => {
-    let events = [];
-    for (let e of slots) {
-      events.push({
-        title: "Available",
-        type: "availability",
-        start: new Date(e["startDate"]),
-        end: new Date(e["endDate"]),
-      });
-    }
-    setVacationEvents([]);
-    setAvailableEvents(events);
   };
 
   const createVacationEvents = (slots) => {
@@ -145,7 +134,7 @@ export default function Schedule() {
       } else {
         slots = calendars[0];
       }
-      createAvailabilityEvents(slots);
+      createAvailabilityEvents(slots, setAvailableEvents, setVacationEvents);
       setDownloadAlert(false);
     } else {
       console.error("Download error: ", error);
@@ -220,14 +209,15 @@ export default function Schedule() {
 
             <Grid item xs={3}>
               <PeopleDrawer
-                getContacts={() =>
+                getContacts={() => {
                   fetchContacts(
                     participants,
                     solidFetch,
                     setValidParticipants,
-                    setInvalidParticipants
-                  )
-                }
+                    setInvalidParticipants,
+                    contactUrl
+                  );
+                }}
                 validParticipants={validParticipants}
                 invalidParticipants={invalidParticipants}
                 selectedParticipants={selectedParticipants}

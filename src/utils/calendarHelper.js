@@ -9,6 +9,42 @@ const dummyData = {
   "test:dummy2-vacation": getDummyVacationDays(3),
 };
 
+export const createAvailabilityEvents = (
+  slots,
+  setAvailableEvents,
+  setVacationEvents
+) => {
+  let events = [];
+  for (let e of slots) {
+    if (Array.isArray(e["startDate"]) && Array.isArray(e["endDate"])) {
+      if (e["startDate"].length == e["endDate"].length) {
+        for (let i = 0; i < e["startDate"].length; i++) {
+          events.push({
+            title: "Available",
+            type: "availability",
+            start: new Date(e["startDate"][i]),
+            end: new Date(e["endDate"][i]),
+          });
+        }
+      }
+    } else {
+      events.push({
+        title: "Available",
+        type: "availability",
+        start: new Date(e["startDate"]),
+        end: new Date(e["endDate"]),
+      });
+    }
+  }
+
+  if (setAvailableEvents) {
+    setAvailableEvents(events);
+  }
+  if (setVacationEvents) {
+    setVacationEvents([]);
+  }
+};
+
 export async function downloadSelectedAvailability(
   selectedParticipants,
   participants,
@@ -28,6 +64,10 @@ export async function downloadSelectedAvailability(
     } catch (e) {
       console.log(e);
       error = "Could not download availability calendar";
+    }
+
+    if (Object.keys(participants[webid]).length === 0) {
+      return { calendars: null, error: null };
     }
 
     if (participants[webid].availabilityCalendar.status === "download-failed") {
